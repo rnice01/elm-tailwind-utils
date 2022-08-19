@@ -1,0 +1,11 @@
+{
+  "name": "elm-tailwind-utils",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:rnice01/elm-tailwind-utils.git",
+  "author": "Rob <rob.nice@protonmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "elm-test": "^0.19.1-revision9"
+  }
+}
