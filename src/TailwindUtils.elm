@@ -1,37 +1,23 @@
 module TailwindUtils exposing (..)
 
-type alias Properties = {
-    padding: List Padding
-    , width: Width
-    , height: Height
-    , backgroundColor: BackgroundColor
-    }
+type Property =
+    Padding Side Rems
+    | Width Percentage
 
-classFromProperties : Properties -> String
-classFromProperties props =
-    let
-      padding_ = String.join " " <| List.map classFor props.padding 
-      bgColor_ = bgColor props.backgroundColor
-    in
-    String.join " " [padding_, bgColor_]
+classFromProp : Property -> String
+classFromProp prop =
+    case prop of
+        Padding side_ rems_ -> padding side_ rems_
+        Width w -> width w
 
+
+classFor : List Property -> String
+classFor props = String.join " " <| List.map classFromProp props
 
 -- Padding --
-type Padding = Padding Side Rems
-
-classFor : Padding -> String
-classFor (Padding side rems) =
-    let
-      side_ = case side of
-        All -> "p-"
-        Bottom -> "pb-"
-        Left -> "pl-"
-        LeftRight -> "px-"
-        Right -> "pr-"
-        Top -> "pt-"
-        TopBottom -> "py-"
-    in
-    side_ ++ remClass rems
+padding : Side -> Rems -> String
+padding side_ rems_ =
+      String.join "" ["p", side side_, "-", remClass rems_]
 
 
 --- Colors ---
@@ -41,6 +27,7 @@ type Intensity =
 
 type Color =
     Blue Intensity
+
 
 type BackgroundColor = BackgroundColor Color
 
@@ -53,6 +40,7 @@ bgColor : BackgroundColor -> String
 bgColor (BackgroundColor color_) =
     "bg" ++ color color_
 
+
 intensityClass : Intensity -> String
 intensityClass intensity =
     case intensity of
@@ -61,6 +49,16 @@ intensityClass intensity =
 
 
 -- Dimensions --
+dimension : Dimension -> String
+dimension d =
+  case d of
+    Rems r -> remClass r
+    Percent p -> ""
+
+type Dimension =
+    Rems Rems
+    | Percent Percentage
+  
 type Rems =
     Point5Rems
     | OneRem
@@ -95,6 +93,17 @@ type Side =
     | Top
     | TopBottom
 
+side : Side -> String
+side s =
+    case s of
+      All -> ""
+      Bottom -> "b"
+      Left -> "l"
+      LeftRight -> "x"
+      Right -> "r"
+      Top -> "t"
+      TopBottom -> "y"
+
 type Width =
     WidthPercent Percentage
     | WidthRems Rems
@@ -118,23 +127,19 @@ remClass rems =
       FiveRems -> "5"
       _ -> ""
 
-percentageClass : Percentage -> String
-percentageClass percentage =
-    case percentage of
+percentage : Percentage -> String
+percentage percentage_ =
+    case percentage_ of
         TwentyFivePercent -> "1/4"
         FiftyPercent -> "1/2"
         SeventyFivePercent -> "3/4"
         _ -> ""
 
-width : Width -> String
-width width_ =
-    case width_ of
-      WidthPercent p -> percentageClass p
-      WidthRems r -> remClass r
-
+width : Percentage -> String
+width p = "w-" ++ percentage p
 
 height : Height -> String
 height height_ =
     case height_ of
-      HeightPercent p -> percentageClass p
+      HeightPercent p -> percentage p
       HeightRems r -> remClass r
