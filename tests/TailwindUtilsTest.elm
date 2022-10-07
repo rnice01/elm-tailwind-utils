@@ -11,17 +11,22 @@ suite =
     [
       test "Padding"
         (\_ ->
-          (classFor [Padding Top ThreeRems])
+          (twCss [Padding Top ThreeRems])
           |> Expect.equal "pt-3"
         )
       , test "Width"
         (\_ ->
-          (classFor [Width FiftyPercent])
+          (twCss [Width FiftyPercent])
           |> Expect.equal "w-1/2"
         )
       , test "Multiple classes"
         (\_ ->
-          (classFor [Padding TopBottom FiveRems, Width SeventyFivePercent])
+          (twCss [Padding TopBottom FiveRems, Width SeventyFivePercent])
           |> Expect.equal "py-5 w-3/4"
+        )
+      , test "Colors"
+        (\_ ->
+          (twCss [BackgroundColor Black OneHundred, BackgroundColor White Default])
+          |> Expect.equal "bg-black-100 bg-white"
         )
       ]

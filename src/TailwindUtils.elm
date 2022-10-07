@@ -1,18 +1,21 @@
 module TailwindUtils exposing (..)
+import Test.Html.Selector exposing (class)
 
 type Property =
     Padding Side Rems
     | Width Percentage
+    | BackgroundColor Color Intensity
 
 classFromProp : Property -> String
 classFromProp prop =
     case prop of
+        BackgroundColor color_ intensity -> bgColor color_ intensity
         Padding side_ rems_ -> padding side_ rems_
         Width w -> width w
 
 
-classFor : List Property -> String
-classFor props = String.join " " <| List.map classFromProp props
+twCss : List Property -> String
+twCss props = String.join " " <| List.map classFromProp props
 
 -- Padding --
 padding : Side -> Rems -> String
@@ -22,30 +25,38 @@ padding side_ rems_ =
 
 --- Colors ---
 type Intensity =
-    OneHundred
+    Default
+    | OneHundred
     | TwoHundred
 
 type Color =
-    Blue Intensity
+    Black
+    | Blue
+    | White
 
 
-type BackgroundColor = BackgroundColor Color
+color : Color -> Intensity -> String
+color color_ intensity =
+    let
+      colo = case color_ of
+                Black -> "black"
+                Blue -> "blue"
+                White -> "white"
+    in
 
-color : Color -> String
-color color_ =
-    case color_ of
-        Blue intensity -> "blue-" ++ intensityClass intensity
+    colo ++ intensityClass intensity
 
-bgColor : BackgroundColor -> String
-bgColor (BackgroundColor color_) =
-    "bg" ++ color color_
+bgColor : Color -> Intensity -> String
+bgColor color_ intensity =
+    "bg-" ++ color color_ intensity
 
 
 intensityClass : Intensity -> String
 intensityClass intensity =
     case intensity of
-        OneHundred -> "100"
-        TwoHundred -> "200"
+        Default -> ""
+        OneHundred -> "-100"
+        TwoHundred -> "-200"
 
 
 -- Dimensions --
@@ -143,3 +154,5 @@ height height_ =
     case height_ of
       HeightPercent p -> percentage p
       HeightRems r -> remClass r
+
+
