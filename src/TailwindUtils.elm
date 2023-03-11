@@ -1,36 +1,62 @@
 module TailwindUtils exposing (..)
+
 import Test.Html.Selector exposing (class)
 
-type Property =
-    Padding Side Rems
-    | Width Percentage
+
+type Property
+    = Padding Side Dimension
+    | Width Dimension
     | BackgroundColor Color Intensity
+
 
 classFromProp : Property -> String
 classFromProp prop =
     case prop of
-        BackgroundColor color_ intensity -> bgColor color_ intensity
-        Padding side_ rems_ -> padding side_ rems_
-        Width w -> width w
+        BackgroundColor color_ intensity ->
+            bgColor color_ intensity
+
+        Padding side_ rems_ ->
+            padding side_ rems_
+
+        Width w ->
+            width w
+
+
+
+-- Height and Width --
+
+
+width : Dimension -> String
+width d =
+    String.join "" [ "w-", dimension d ]
 
 
 twCss : List Property -> String
-twCss props = String.join " " <| List.map classFromProp props
+twCss props =
+    String.join " " <| List.map classFromProp props
+
+
 
 -- Padding --
-padding : Side -> Rems -> String
-padding side_ rems_ =
-      String.join "" ["p", side side_, "-", remClass rems_]
+
+
+padding : Side -> Dimension -> String
+padding side_ dimension_ =
+    String.join "" [ "p", side side_, "-", dimension dimension_ ]
+
 
 
 --- Colors ---
-type Intensity =
-    Default
+
+
+type Intensity
+    = Default
     | OneHundred
     | TwoHundred
 
-type Color =
-    Black
+
+type Color
+    = Black
     | Blue
     | White
 
@@ -38,13 +64,19 @@ type Color =
 color : Color -> Intensity -> String
 color color_ intensity =
     let
-      colo = case color_ of
-                Black -> "black"
-                Blue -> "blue"
-                White -> "white"
-    in
+        colo =
+            case color_ of
+                Black ->
+                    "black"
 
+                Blue ->
+                    "blue"
+
+                White ->
+                    "white"
+    in
     colo ++ intensityClass intensity
+
 
 bgColor : Color -> Intensity -> String
 bgColor color_ intensity =
@@ -54,24 +86,23 @@ bgColor color_ intensity =
 intensityClass : Intensity -> String
 intensityClass intensity =
     case intensity of
-        Default -> ""
-        OneHundred -> "-100"
-        TwoHundred -> "-200"
+        Default ->
+            ""
+
+        OneHundred ->
+            "-100"
+
+        TwoHundred ->
+            "-200"
+
 
 
 -- Dimensions --
-dimension : Dimension -> String
-dimension d =
-  case d of
-    Rems r -> remClass r
-    Percent p -> ""
 
-type Dimension =
-    Rems Rems
-    | Percent Percentage
-  
-type Rems =
-    Point5Rems
+
+type Dimension
+    = Auto
+    | Point5Rems
     | OneRem
     | OneAndAHalfRems
     | TwoRems
@@ -85,18 +116,15 @@ type Rems =
     | EightRems
     | NineRems
     | TenRems
+    | TwentyFivePercent
+    | ThirtyThreePercent
+    | FiftyPercent
+    | SeventyFivePercent
+    | OneHundredPercent
 
 
-type Percentage =
-  Auto
-  | TwentyFivePercent
-  | ThirtyThreePercent
-  | FiftyPercent
-  | SeventyFivePercent
-  | OneHundredPercent
-
-type Side =
-    All
+type Side
+    = All
     | Bottom
     | Left
     | LeftRight
@@ -104,55 +132,70 @@ type Side =
     | Top
     | TopBottom
 
+
 side : Side -> String
 side s =
     case s of
-      All -> ""
-      Bottom -> "b"
-      Left -> "l"
-      LeftRight -> "x"
-      Right -> "r"
-      Top -> "t"
-      TopBottom -> "y"
+        All ->
+            ""
 
-type Width =
-    WidthPercent Percentage
-    | WidthRems Rems
+        Bottom ->
+            "b"
 
-type Height =
-    HeightPercent Percentage
-    | HeightRems Rems
+        Left ->
+            "l"
 
+        LeftRight ->
+            "x"
 
-remClass : Rems -> String
-remClass rems =
-    case rems of
-      Point5Rems -> "0.5"
-      OneRem -> "1"
-      OneAndAHalfRems -> "1.5"
-      TwoRems -> "2"
-      TwoAndAHalfRems -> "2.5"
-      ThreeRems -> "3"
-      ThreeAndAHalfRems -> "3.5"
-      FourRems -> "4"
-      FiveRems -> "5"
-      _ -> ""
+        Right ->
+            "r"
 
-percentage : Percentage -> String
-percentage percentage_ =
-    case percentage_ of
-        TwentyFivePercent -> "1/4"
-        FiftyPercent -> "1/2"
-        SeventyFivePercent -> "3/4"
-        _ -> ""
+        Top ->
+            "t"
 
-width : Percentage -> String
-width p = "w-" ++ percentage p
-
-height : Height -> String
-height height_ =
-    case height_ of
-      HeightPercent p -> percentage p
-      HeightRems r -> remClass r
+        TopBottom ->
+            "y"
 
 
+dimension : Dimension -> String
+dimension d =
+    case d of
+        TwentyFivePercent ->
+            "1/4"
+
+        FiftyPercent ->
+            "1/2"
+
+        SeventyFivePercent ->
+            "3/4"
+
+        Point5Rems ->
+            "0.5"
+
+        OneRem ->
+            "1"
+
+        OneAndAHalfRems ->
+            "1.5"
+
+        TwoRems ->
+            "2"
+
+        TwoAndAHalfRems ->
+            "2.5"
+
+        ThreeRems ->
+            "3"
+
+        ThreeAndAHalfRems ->
+            "3.5"
+
+        FourRems ->
+            "4"
+
+        FiveRems ->
+            "5"
+
+        _ ->
+            ""
